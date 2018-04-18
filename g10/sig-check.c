@@ -715,8 +715,9 @@ check_revocation_keys (ctrl_t ctrl, PKT_public_key *pk, PKT_signature *sig)
 	    {
               gcry_md_hd_t md;
 
-              if (gcry_md_open (&md, sig->digest_algo, 0))
-                BUG ();
+              rc = gcry_md_open (&md, sig->digest_algo, 0);
+              if (rc)
+                  return rc;
               hash_public_key(md,pk);
 	      /* Note: check_signature only checks that the signature
 		 is good.  It does not fail if the key is revoked.  */

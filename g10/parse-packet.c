@@ -743,7 +743,12 @@ parse (parse_packet_ctx_t ctx, PACKET *pkt, int onlykeypkts, off_t * retpos,
        * the uncompressing layer - in some error cases it just loops
        * and spits out 0xff bytes. */
       log_error ("%s: garbled packet detected\n", iobuf_where (inp));
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+      rc = gpg_error (GPG_ERR_INV_PACKET);
+      goto leave;
+#else
       g10_exit (2);
+#endif
     }
 
   if (out && pkttype)

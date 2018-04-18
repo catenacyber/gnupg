@@ -155,8 +155,15 @@ do_uncompress( compress_filter_context_t *zfx, bz_stream *bzs,
 		  (unsigned)bzs->avail_in, (unsigned)bzs->avail_out, zrc);
       if( zrc == BZ_STREAM_END )
 	rc = -1; /* eof */
-      else if( zrc != BZ_OK && zrc != BZ_PARAM_ERROR )
-	log_fatal("bz2lib inflate problem: rc=%d\n", zrc );
+      else if( zrc != BZ_OK && zrc != BZ_PARAM_ERROR ) {
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+            log_error("bz2lib inflate problem: rc=%d\n", zrc );
+            rc = GPG_ERR_BAD_DATA;
+            break;
+#else
+            log_fatal("bz2lib inflate problem: rc=%d\n", zrc );
+#endif
+        }
       else if (zrc == BZ_OK && eofseen
                && !bzs->avail_in && bzs->avail_out > 0)
         {

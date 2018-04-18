@@ -655,10 +655,16 @@ ask_for_detached_datafile (gcry_md_hd_t md, gcry_md_hd_t md2,
 
   if (!fp)
     {
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+        errno = ENOENT;
+        rc = gpg_error_from_syserror ();
+        goto leave;
+#else
       if (opt.verbose)
 	log_info (_("reading stdin ...\n"));
       fp = iobuf_open (NULL);
       log_assert (fp);
+#endif
     }
   do_hash (md, md2, fp, textmode);
   iobuf_close (fp);

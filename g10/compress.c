@@ -204,10 +204,19 @@ do_uncompress( compress_filter_context_t *zfx, z_stream *zs,
 	if( zrc == Z_STREAM_END )
 	    rc = -1; /* eof */
 	else if( zrc != Z_OK && zrc != Z_BUF_ERROR ) {
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+        rc = -1;
+        zrc = Z_BUF_ERROR;
+	    if( zs->msg )
+		log_error("zlib inflate problem: %s\n", zs->msg );
+	    else
+		log_error("zlib inflate problem: rc=%d\n", zrc );
+#else
 	    if( zs->msg )
 		log_fatal("zlib inflate problem: %s\n", zs->msg );
 	    else
 		log_fatal("zlib inflate problem: rc=%d\n", zrc );
+#endif
 	}
     } while (zs->avail_out && zrc != Z_STREAM_END && zrc != Z_BUF_ERROR
              && !leave);

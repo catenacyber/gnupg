@@ -299,7 +299,9 @@ static void
 invalid_armor(void)
 {
     write_status(STATUS_BADARMOR);
+#ifndef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
     g10_exit(1); /* stop here */
+#endif
 }
 
 
