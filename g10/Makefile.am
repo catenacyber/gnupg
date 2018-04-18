@@ -47,6 +47,7 @@ endif
 # NB: We use noinst_ for gpg and gpgv so that we can install them with
 # the install-hook target under the name gpg2/gpgv2.
 noinst_PROGRAMS = gpg
+noinst_LIBRARIES = libgpg.a
 if !HAVE_W32CE_SYSTEM
 noinst_PROGRAMS += gpgv
 endif
@@ -157,6 +158,9 @@ gpg_sources = server.c          \
 
 gpg_SOURCES  = gpg.c \
 	keyedit.c keyedit.h	\
+	$(gpg_sources)
+
+libgpg_a_SOURCES  = keyedit.c keyedit.h	\
 	$(gpg_sources)
 
 gpgcompose_SOURCES  = gpgcompose.c  $(gpg_sources)
