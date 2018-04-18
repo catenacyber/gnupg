@@ -19,6 +19,8 @@
 #ifndef GNUPG_G10_CALL_DIRMNGR_H
 #define GNUPG_G10_CALL_DIRMNGR_H
 
+#include "options.h"
+
 void gpg_dirmngr_deinit_session_data (ctrl_t ctrl);
 
 gpg_error_t gpg_dirmngr_ks_list (ctrl_t ctrl, char **r_keyserver);
