@@ -83,6 +83,7 @@ int main ()
         size_t res = iconv (cd_utf8_to_88591,
                             (char **) &inptr, &inbytesleft,
                             &outptr, &outbytesleft);
+        iconv_close(cd_utf8_to_88591);
         if (res == 0)
           return 1;
       }
@@ -107,17 +108,19 @@ int main ()
       }
   }
 #endif
+  iconv_t ic;
   /* Test against HP-UX 11.11 bug: No converter from EUC-JP to UTF-8 is
      provided.  */
   if (/* Try standardized names.  */
-      iconv_open ("UTF-8", "EUC-JP") == (iconv_t)(-1)
+      (ic = iconv_open ("UTF-8", "EUC-JP")) == (iconv_t)(-1)
       /* Try IRIX, OSF/1 names.  */
-      && iconv_open ("UTF-8", "eucJP") == (iconv_t)(-1)
+      && (ic = iconv_open ("UTF-8", "eucJP")) == (iconv_t)(-1)
       /* Try AIX names.  */
-      && iconv_open ("UTF-8", "IBM-eucJP") == (iconv_t)(-1)
+      && (ic = iconv_open ("UTF-8", "IBM-eucJP")) == (iconv_t)(-1)
       /* Try HP-UX names.  */
-      && iconv_open ("utf8", "eucJP") == (iconv_t)(-1))
+      && (ic = iconv_open ("utf8", "eucJP")) == (iconv_t)(-1))
     return 1;
+  iconv_close(ic);
   return 0;
 }], [am_cv_func_iconv_works=yes], [am_cv_func_iconv_works=no],
         [case "$host_os" in
