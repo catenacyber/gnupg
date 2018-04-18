@@ -956,6 +956,15 @@ AC_CHECK_LIB(util, openpty,
              ])
 AC_SUBST(LIBUTIL_LIBS)
 
+# TODO choose when to build fuzzing with option ?
+AC_CHECK_LIB(FuzzingEngine, main,
+              [ LIB_FUZZING_ENGINE="-lFuzzingEngine"
+                have_fuzz=yes
+             ])
+AC_SUBST(LIB_FUZZING_ENGINE)
+AC_CHECK_PROG(HAVE_CLANGXX, clang++, 1)
+AM_CONDITIONAL(HAVE_LIB_FUZZING_ENGINE, [test "$have_fuzz" = yes -a "$HAVE_CLANGXX" = 1])
+
 # shred is used to clean temporary plain text files.
 AC_PATH_PROG(SHRED, shred, /usr/bin/shred)
 AC_DEFINE_UNQUOTED(SHRED,
@@ -2053,6 +2062,7 @@ tests/migrations/Makefile
 tests/gpgsm/Makefile
 tests/gpgme/Makefile
 tests/pkits/Makefile
+tests/fuzz/Makefile
 g10/gpg.w32-manifest
 ])
 
